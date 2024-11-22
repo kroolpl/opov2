@@ -1,18 +1,13 @@
 import { createClient } from 'contentful';
-import type { Entry, EntrySkeletonType, EntryFieldTypes } from 'contentful';
+import type { Entry, EntryFieldTypes } from 'contentful';
 
-interface StoryFields {
-  title: EntryFieldTypes.Text;
-  slug: EntryFieldTypes.Text;
-  author: EntryFieldTypes.Text;
-  content: EntryFieldTypes.RichText;
-  isPublished: EntryFieldTypes.Boolean;
-  publishedDate: EntryFieldTypes.Date;
-}
-
-interface StorySkeletonType extends EntrySkeletonType {
-  contentTypeId: 'story';
-  fields: StoryFields;
+export interface StoryFields {
+  title: string;
+  slug: string;
+  author: string;
+  content: any;
+  isPublished: boolean;
+  publishedDate: string;
 }
 
 export type Story = Entry<StoryFields>;
@@ -29,7 +24,7 @@ export const contentfulClient = createClient({
 
 export async function getPublishedStories() {
   try {
-    const response = await contentfulClient.getEntries<StorySkeletonType>({
+    const response = await contentfulClient.getEntries<StoryFields>({
       content_type: 'story',
       'fields.isPublished': true,
       order: ['-fields.publishedDate']
@@ -44,7 +39,7 @@ export async function getPublishedStories() {
 
 export async function getStoryBySlug(slug: string) {
   try {
-    const response = await contentfulClient.getEntries<StorySkeletonType>({
+    const response = await contentfulClient.getEntries<StoryFields>({
       content_type: 'story',
       'fields.slug': slug,
       limit: 1
