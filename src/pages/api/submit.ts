@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
-import * as contentful from 'contentful-management';
+import { createClient } from 'contentful-management';
 
-const client = contentful.createClient({
+const client = createClient({
   accessToken: import.meta.env.CONTENTFUL_MANAGEMENT_TOKEN || ''
 });
 

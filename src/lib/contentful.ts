@@ -1,13 +1,18 @@
-import type { Entry, EntryFieldTypes } from 'contentful';
-import * as contentful from 'contentful';
+import { createClient } from 'contentful';
+import type { Entry, EntrySkeletonType, EntryFieldTypes } from 'contentful';
 
-export interface StoryFields {
-  title: string;
-  slug: string;
-  author: string;
-  content: any; // Rich text content
-  isPublished: boolean;
-  publishedDate: string;
+interface StoryFields {
+  title: EntryFieldTypes.Text;
+  slug: EntryFieldTypes.Text;
+  author: EntryFieldTypes.Text;
+  content: EntryFieldTypes.RichText;
+  isPublished: EntryFieldTypes.Boolean;
+  publishedDate: EntryFieldTypes.Date;
+}
+
+interface StorySkeletonType extends EntrySkeletonType {
+  contentTypeId: 'story';
+  fields: StoryFields;
 }
 
 export type Story = Entry<StoryFields>;
@@ -16,7 +21,7 @@ if (!import.meta.env.CONTENTFUL_SPACE_ID || !import.meta.env.CONTENTFUL_ACCESS_T
   throw new Error('Missing Contentful environment variables');
 }
 
-export const contentfulClient = contentful.createClient({
+export const contentfulClient = createClient({
   space: import.meta.env.CONTENTFUL_SPACE_ID,
   accessToken: import.meta.env.CONTENTFUL_ACCESS_TOKEN,
   environment: 'master'
@@ -24,7 +29,7 @@ export const contentfulClient = contentful.createClient({
 
 export async function getPublishedStories() {
   try {
-    const response = await contentfulClient.getEntries<StoryFields>({
+    const response = await contentfulClient.getEntries<StorySkeletonType>({
       content_type: 'story',
       'fields.isPublished': true,
       order: ['-fields.publishedDate']
@@ -39,7 +44,7 @@ export async function getPublishedStories() {
 
 export async function getStoryBySlug(slug: string) {
   try {
-    const response = await contentfulClient.getEntries<StoryFields>({
+    const response = await contentfulClient.getEntries<StorySkeletonType>({
       content_type: 'story',
       'fields.slug': slug,
       limit: 1
