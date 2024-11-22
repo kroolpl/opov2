@@ -16,8 +16,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "preview": "astro preview"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
