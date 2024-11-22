@@ -1,5 +1,37 @@
 ---
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import Layout from '../../layouts/Layout.astro';
-import { getStoryBySlug, contentfulClient, type Story } from '../../lib/contentful';
-// ... rest of the file remains the same 
+import { contentfulClient, type Story } from '../../lib/contentful';
+
+export async function getStaticPaths() {
+  const entries = await contentfulClient.getEntries({
+    content_type: 'story',
+    'fields.isPublished': true
+  });
+
+  return entries.items.map((entry: Story) => ({
+    params: { slug: entry.fields.slug },
+    props: { entry }
+  }));
+}
+
+type Props = {
+  entry: Story;
+};
+
+const { entry } = Astro.props;
+const content = documentToHtmlString(entry.fields.content);
+---
+
+<Layout title={entry.fields.title}>
+  <article class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-4">{entry.fields.title}</h1>
+    <div class="mb-8">
+      <p class="text-gray-600">By {entry.fields.author}</p>
+      <time class="text-sm text-gray-500">
+        {new Date(entry.fields.publishedDate).toLocaleDateString()}
+      </time>
+    </div>
+    <div class="prose prose-lg" set:html={content} />
+  </article>
+</Layout> 

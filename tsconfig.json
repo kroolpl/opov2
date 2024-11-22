@@ -1,5 +1,5 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "extends": "astro/tsconfigs/strictest",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -8,9 +8,6 @@
     "jsx": "preserve",
     "jsxImportSource": "astro",
     "types": ["astro/client", "node"],
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "allowJs": true,
-    "strict": true
+    "verbatimModuleSyntax": true
   }
 }
