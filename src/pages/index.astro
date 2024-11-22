@@ -9,20 +9,24 @@ const stories = await getPublishedStories();
   <main class="max-w-4xl mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold mb-8">Featured Stories</h1>
     
-    <div class="grid gap-6">
-      {stories.map((story: Story) => (
-        <article class="border rounded-lg p-6">
-          <h2 class="text-2xl font-semibold mb-2">
-            <a href={`/stories/${story.fields.slug}`} class="hover:underline">
-              {story.fields.title}
-            </a>
-          </h2>
-          <p class="text-gray-600">By {story.fields.author}</p>
-          <time class="text-sm text-gray-500">
-            {new Date(story.fields.publishedDate).toLocaleDateString()}
-          </time>
-        </article>
-      ))}
-    </div>
+    {stories.length > 0 ? (
+      <div class="grid gap-6">
+        {stories.map((story) => (
+          <article class="border rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-2">
+              <a href={`/stories/${story.fields.slug}`} class="hover:underline">
+                {story.fields.title}
+              </a>
+            </h2>
+            <p class="text-gray-600">By {story.fields.author}</p>
+            <time class="text-sm text-gray-500">
+              {new Date(story.fields.publishedDate).toLocaleDateString()}
+            </time>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p>No stories available at the moment.</p>
+    )}
   </main>
 </Layout>
