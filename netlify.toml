@@ -1,19 +1,19 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  functions = ".netlify/functions-internal"
 
 [build.environment]
   NODE_VERSION = "18"
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/entry"
+  to = "/index.html"
   status = 200
+  force = false
 
 [functions]
-  directory = ".netlify/functions-internal"
+  node_bundler = "esbuild"
 
 [dev]
   framework = "astro"
-  targetPort = 4321 
+  targetPort = 4321
