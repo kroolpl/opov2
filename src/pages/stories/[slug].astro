@@ -1,11 +1,11 @@
 ---
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import Layout from '../../layouts/Layout.astro';
-import { contentfulClient, type StoryFields } from '../../lib/contentful';
+import { contentfulClient, type Story } from '../../lib/contentful';
 
 export async function getStaticPaths() {
   try {
-    const entries = await contentfulClient.getEntries<StoryFields>({
+    const entries = await contentfulClient.getEntries<Story['fields']>({
       content_type: 'story',
       'fields.isPublished': true
     });
@@ -25,7 +25,7 @@ const content = entry ? documentToHtmlString(entry.fields.content) : '';
 ---
 
 {entry ? (
-  <Layout title={entry.fields.title}>
+  <Layout title={entry.fields.title || 'Story'}>
     <article class="max-w-3xl mx-auto px-4 py-8">
       <h1 class="text-4xl font-bold mb-4">{entry.fields.title}</h1>
       <div class="mb-8">

@@ -3,7 +3,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
 import { contentfulClient, type Story } from '../lib/contentful';
 
 // Get all stories, including unpublished ones
-const response = await contentfulClient.getEntries<Story>({
+const response = await contentfulClient.getEntries<Story['fields']>({
   content_type: 'story',
   order: ['-sys.createdAt']
 });
@@ -75,7 +75,11 @@ const stories = response.items;
 </AdminLayout>
 
 <script>
-  async function togglePublish(entryId: string, publish: boolean) {
+  declare global {
+    function togglePublish(entryId: string, publish: boolean): Promise<void>;
+  }
+
+  window.togglePublish = async function(entryId: string, publish: boolean) {
     try {
       const response = await fetch('/api/toggle-publish', {
         method: 'POST',
@@ -94,5 +98,5 @@ const stories = response.items;
       console.error('Error:', error);
       alert('Failed to update story status');
     }
-  }
+  };
 </script> 
