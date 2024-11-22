@@ -1,19 +1,16 @@
 import { createClient } from 'contentful';
-import type { Entry, EntryFieldTypes, EntrySkeletonType } from 'contentful';
+import type { Entry, EntryFieldTypes } from 'contentful';
 
-export interface StoryFields {
-  contentTypeId: 'story';
-  fields: {
-    title: EntryFieldTypes.Text;
-    slug: EntryFieldTypes.Text;
-    author: EntryFieldTypes.Text;
-    content: EntryFieldTypes.RichText;
-    isPublished: EntryFieldTypes.Boolean;
-    publishedDate: EntryFieldTypes.Date;
-  };
+interface StoryFields {
+  title: string;
+  slug: string;
+  author: string;
+  content: any;
+  isPublished: boolean;
+  publishedDate: string;
 }
 
-export type Story = Entry<StoryFields['fields']>;
+export type Story = Entry<StoryFields>;
 
 if (!import.meta.env.CONTENTFUL_SPACE_ID || !import.meta.env.CONTENTFUL_ACCESS_TOKEN) {
   throw new Error(
@@ -30,7 +27,7 @@ export const contentfulClient = createClient({
 
 export async function getPublishedStories(): Promise<Story[]> {
   try {
-    const response = await contentfulClient.getEntries<StoryFields['fields']>({
+    const response = await contentfulClient.getEntries<StoryFields>({
       content_type: 'story',
       'fields.isPublished': true,
       order: ['-fields.publishedDate']
@@ -45,7 +42,7 @@ export async function getPublishedStories(): Promise<Story[]> {
 
 export async function getStoryBySlug(slug: string): Promise<Story | null> {
   try {
-    const response = await contentfulClient.getEntries<StoryFields['fields']>({
+    const response = await contentfulClient.getEntries<StoryFields>({
       content_type: 'story',
       'fields.slug': slug,
       limit: 1

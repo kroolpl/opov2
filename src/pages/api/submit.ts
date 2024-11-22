@@ -16,26 +16,7 @@ export const POST: APIRoute = async ({ request }) => {
     const space = await client.getSpace(import.meta.env.CONTENTFUL_SPACE_ID || '');
     const environment = await space.getEnvironment('master');
 
-    // First, create the content type if it doesn't exist
-    try {
-      await environment.getContentType('story');
-    } catch {
-      // Create content type if it doesn't exist
-      const contentType = await environment.createContentTypeWithId('story', {
-        name: 'Story',
-        fields: [
-          { id: 'title', name: 'Title', type: 'Text', required: true },
-          { id: 'slug', name: 'Slug', type: 'Text', required: true },
-          { id: 'author', name: 'Author', type: 'Text', required: true },
-          { id: 'content', name: 'Content', type: 'RichText', required: true },
-          { id: 'isPublished', name: 'Is Published', type: 'Boolean', required: true },
-          { id: 'publishedDate', name: 'Published Date', type: 'Date', required: true }
-        ]
-      });
-      await contentType.publish();
-    }
-    
-    // Create entry
+    // Create entry directly without creating content type
     const entry = await environment.createEntry('story', {
       fields: {
         title: { 'en-US': title },
@@ -66,7 +47,6 @@ export const POST: APIRoute = async ({ request }) => {
       }
     });
 
-    // Publish the entry
     await entry.publish();
 
     return new Response(JSON.stringify({ success: true }), {

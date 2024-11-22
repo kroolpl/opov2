@@ -23,7 +23,7 @@ const { title } = Astro.props;
     </div>
     <div id="login-prompt" class="flex items-center justify-center min-h-[60vh]">
       <button 
-        onclick="netlifyIdentity.open()"
+        onclick="window.netlifyIdentity && window.netlifyIdentity.open()"
         class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
       >
         Log In
@@ -33,9 +33,17 @@ const { title } = Astro.props;
 </html>
 
 <script>
-  // Handle authentication
+  declare global {
+    interface Window {
+      netlifyIdentity: {
+        on: (event: string, callback: (user?: any) => void) => void;
+        open: () => void;
+      };
+    }
+  }
+
   if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
+    window.netlifyIdentity.on("init", (user) => {
       if (user) {
         document.getElementById("admin-content")!.style.display = "block";
         document.getElementById("login-prompt")!.style.display = "none";
