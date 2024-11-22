@@ -1,19 +1,21 @@
+import type { Entry, EntrySkeletonType } from 'contentful';
 import * as contentful from 'contentful';
 
-export interface StoryFields {
+export interface StoryFields extends EntrySkeletonType {
   title: string;
   slug: string;
   author: string;
   content: contentful.EntryFields.RichText;
   isPublished: boolean;
   publishedDate: string;
+  contentTypeId: 'story';
 }
 
-export interface Story extends contentful.Entry<StoryFields> {}
+export type Story = Entry<StoryFields>;
 
 export const contentfulClient = contentful.createClient({
-  space: process.env.CONTENTFUL_SPACE_ID || '',
-  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || '',
+  space: import.meta.env.CONTENTFUL_SPACE_ID,
+  accessToken: import.meta.env.CONTENTFUL_ACCESS_TOKEN,
   environment: 'master'
 });
 
