@@ -11,3 +11,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+declare module 'contentful' {
+  interface EntrySkeletonType<T = any> {
+    contentTypeId: string;
+    fields: T;
+  }
+}

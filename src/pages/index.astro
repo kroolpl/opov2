@@ -1,8 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getPublishedStories, type Story } from '../lib/contentful';
+import { contentfulClient, type StoryFields } from '../lib/contentful';
 
-const stories = await getPublishedStories();
+const response = await contentfulClient.getEntries<StoryFields['fields']>({
+  content_type: 'story',
+  'fields.isPublished': true,
+  order: ['-fields.publishedDate']
+});
+
+const stories = response.items;
 ---
 
 <Layout title="Short Stories">
