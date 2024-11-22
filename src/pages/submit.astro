@@ -1,55 +1,79 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const submitted = Astro.url.searchParams.get('submitted') === 'true';
 ---
 
 <Layout title="Submit Your Story">
   <main class="max-w-2xl mx-auto px-4 py-8">
     <div class="bg-white p-6 rounded-lg shadow-sm">
-      <h1 class="text-3xl font-bold mb-6">Submit Your Story</h1>
-      
-      <form action="/api/submit" method="POST" class="space-y-6">
-        <div>
-          <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-          <input 
-            type="text" 
-            id="title" 
-            name="title" 
-            required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+      {submitted ? (
+        <div class="text-center py-8">
+          <h1 class="text-3xl font-bold mb-4">Thank You!</h1>
+          <p class="text-gray-600 mb-6">
+            Your story has been submitted and is pending review.
+          </p>
+          <a 
+            href="/" 
+            class="inline-block px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
+            Back to Home
+          </a>
         </div>
-        
-        <div>
-          <label for="author" class="block text-sm font-medium text-gray-700">Author Name</label>
-          <input 
-            type="text" 
-            id="author" 
-            name="author" 
-            required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+      ) : (
+        <>
+          <h1 class="text-3xl font-bold mb-6">Submit Your Story</h1>
+          
+          <form 
+            action="/api/submit" 
+            method="POST" 
+            class="space-y-6"
+            enctype="multipart/form-data"
           >
-        </div>
-        
-        <div>
-          <label for="content" class="block text-sm font-medium text-gray-700">Story Content</label>
-          <textarea 
-            id="content" 
-            name="content" 
-            rows="10" 
-            required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          ></textarea>
-        </div>
-        
-        <div class="flex justify-end">
-          <button 
-            type="submit"
-            class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Submit Story
-          </button>
-        </div>
-      </form>
+            <div>
+              <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+              <input 
+                type="text" 
+                id="title" 
+                name="title" 
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              >
+            </div>
+            
+            <div>
+              <label for="author" class="block text-sm font-medium text-gray-700">Author Name</label>
+              <input 
+                type="text" 
+                id="author" 
+                name="author" 
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              >
+            </div>
+            
+            <div>
+              <label for="content" class="block text-sm font-medium text-gray-700">Story Content</label>
+              <textarea 
+                id="content" 
+                name="content" 
+                rows="10" 
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              ></textarea>
+            </div>
+            
+            <div class="flex justify-end">
+              <button 
+                type="submit"
+                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Submit Story
+              </button>
+            </div>
+          </form>
+        </>
+      )}
     </div>
   </main>
 </Layout> 
