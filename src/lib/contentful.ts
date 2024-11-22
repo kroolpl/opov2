@@ -1,19 +1,25 @@
 import { createClient } from 'contentful';
-import type { Entry, EntryFieldTypes } from 'contentful';
+import type { Entry, EntryFieldTypes, EntrySkeletonType } from 'contentful';
 
 export interface StoryFields {
-  title: string;
-  slug: string;
-  author: string;
-  content: any;
-  isPublished: boolean;
-  publishedDate: string;
+  contentTypeId: 'story';
+  fields: {
+    title: EntryFieldTypes.Text;
+    slug: EntryFieldTypes.Text;
+    author: EntryFieldTypes.Text;
+    content: EntryFieldTypes.RichText;
+    isPublished: EntryFieldTypes.Boolean;
+    publishedDate: EntryFieldTypes.Date;
+  };
 }
 
-export type Story = Entry<StoryFields>;
+export type Story = Entry<StoryFields['fields']>;
 
 if (!import.meta.env.CONTENTFUL_SPACE_ID || !import.meta.env.CONTENTFUL_ACCESS_TOKEN) {
-  throw new Error('Missing Contentful environment variables');
+  throw new Error(
+    'Contentful space ID and access token are required. ' +
+    'Please add CONTENTFUL_SPACE_ID and CONTENTFUL_ACCESS_TOKEN to your .env file.'
+  );
 }
 
 export const contentfulClient = createClient({
@@ -22,9 +28,9 @@ export const contentfulClient = createClient({
   environment: 'master'
 });
 
-export async function getPublishedStories() {
+export async function getPublishedStories(): Promise<Story[]> {
   try {
-    const response = await contentfulClient.getEntries<StoryFields>({
+    const response = await contentfulClient.getEntries<StoryFields['fields']>({
       content_type: 'story',
       'fields.isPublished': true,
       order: ['-fields.publishedDate']
@@ -37,15 +43,15 @@ export async function getPublishedStories() {
   }
 }
 
-export async function getStoryBySlug(slug: string) {
+export async function getStoryBySlug(slug: string): Promise<Story | null> {
   try {
-    const response = await contentfulClient.getEntries<StoryFields>({
+    const response = await contentfulClient.getEntries<StoryFields['fields']>({
       content_type: 'story',
       'fields.slug': slug,
       limit: 1
     });
     
-    return response.items[0];
+    return response.items[0] || null;
   } catch (error) {
     console.error('Error fetching story:', error);
     return null;

@@ -17,9 +17,18 @@ const currentPath = Astro.url.pathname;
       </a>
       <a 
         href="/submit" 
-        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        class:list={[
+          "px-4 py-2 rounded-md",
+          currentPath === "/submit" ? "bg-gray-100" : "hover:bg-gray-50"
+        ]}
       >
         Submit Story
+      </a>
+      <a 
+        href="/admin" 
+        class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700"
+      >
+        Admin
       </a>
     </div>
   </div>

@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "dependencies": {
+    "@astrojs/node": "^7.0.4",
     "@astrojs/tailwind": "^5.1.2",
     "@contentful/rich-text-html-renderer": "^17.0.0",
     "@tailwindcss/typography": "^0.5.15",

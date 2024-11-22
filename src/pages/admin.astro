@@ -1,0 +1,98 @@
+---
+import AdminLayout from '../layouts/AdminLayout.astro';
+import { contentfulClient, type Story } from '../lib/contentful';
+
+// Get all stories, including unpublished ones
+const response = await contentfulClient.getEntries<Story>({
+  content_type: 'story',
+  order: ['-sys.createdAt']
+});
+
+const stories = response.items;
+---
+
+<AdminLayout title="Admin Dashboard">
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold">Story Management</h1>
+      <button 
+        onclick="netlifyIdentity.logout()"
+        class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+      >
+        Logout
+      </button>
+    </div>
+
+    <div class="bg-white rounded-lg shadow">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {stories.map((story) => (
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{story.fields.title}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-500">{story.fields.author}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${story.fields.isPublished ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                  {story.fields.isPublished ? 'Published' : 'Draft'}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {new Date(story.fields.publishedDate).toLocaleDateString()}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button 
+                  onclick={`togglePublish('${story.sys.id}', ${!story.fields.isPublished})`}
+                  class={`text-${story.fields.isPublished ? 'red' : 'green'}-600 hover:text-${story.fields.isPublished ? 'red' : 'green'}-900 mr-3`}
+                >
+                  {story.fields.isPublished ? 'Unpublish' : 'Publish'}
+                </button>
+                <a 
+                  href={`/stories/${story.fields.slug}`} 
+                  target="_blank"
+                  class="text-blue-600 hover:text-blue-900"
+                >
+                  View
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</AdminLayout>
+
+<script>
+  async function togglePublish(entryId: string, publish: boolean) {
+    try {
+      const response = await fetch('/api/toggle-publish', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ entryId, publish }),
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Failed to update story status');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to update story status');
+    }
+  }
+</script> 
